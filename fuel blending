@@ -1,0 +1,35 @@
+import heapq
+
+def fuel_mixing(capA, capB, target):
+    pq = [(0, 0, 0, [])]  # f, fuelA, fuelB, path
+    visited = set()
+
+    while pq:
+        _, A, B, path = heapq.heappop(pq)
+        if (A, B) in visited:
+            continue
+        visited.add((A, B))
+        path = path + [(A, B)]
+
+        if A == target:
+            return path
+
+        moves = {
+            (capA, B),           # Fill A
+            (A, capB),           # Fill B
+            (0, B),              # Empty A
+            (A, 0),              # Empty B
+            (A - min(A, capB - B), B + min(A, capB - B)),  # A -> B
+            (A + min(B, capA - A), B - min(B, capA - A))   # B -> A
+        }
+
+        for nA, nB in moves:
+            h = abs(target - nA)
+            heapq.heappush(pq, (len(path) + h, nA, nB, path))
+
+    return None
+
+# Example run: Tank A=6L, Tank B=2L, target=4L
+solution = fuel_mixing(6, 2, 4)
+for step in solution:
+    print(step)
