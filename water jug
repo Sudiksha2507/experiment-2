@@ -1,0 +1,32 @@
+import heapq
+
+def astar_jug(a, b, target):
+    pq = [(0, 0, 0, [])]   # f, x, y, path
+    visited = set()
+
+    while pq:
+        _, x, y, path = heapq.heappop(pq)
+
+        if (x, y) in visited:
+            continue
+        visited.add((x, y))
+        path = path + [(x, y)]
+
+        if x == target or y == target:
+            return path
+
+        moves = {
+            (a, y), (x, b), (0, y), (x, 0),
+            (x - min(x, b - y), y + min(x, b - y)),
+            (x + min(y, a - x), y - min(y, a - x))
+        }
+
+        for nx, ny in moves:
+            h = abs(target - nx) + abs(target - ny)
+            heapq.heappush(pq, (len(path) + h, nx, ny, path))
+
+    return None
+result = astar_jug(4, 3, 2)
+
+for step in result:
+    print(step)
